@@ -1,0 +1,70 @@
+---
+- hosts: servers
+  user: root
+  gather_facts: no
+
+  tasks:
+    - name: yum install someone
+      apt:
+        name: "{{ item }}"
+      with_items:
+        - git
+        - wget
+        - gcc
+        - tmux
+
+    - name: Set up .tmux.conf
+      get_url:
+        url: https://gist.githubusercontent.com/ryota-sakamoto/a475d4c1ba445d27f4befb2862cc4517/raw/2730743901c5c94e191be24060e85fb83d16b90e/.tmux.conf
+        dest: ~/.tmux.conf
+
+    - name: get rustup sh
+      get_url:
+        url: https://sh.rustup.rs
+        dest: /tmp/cargo_install.sh
+
+    - name: Install rustup
+      command: sh /tmp/cargo_install.sh -y
+
+    - name: Install Docker
+      shell: curl -fsSL https://get.docker.com/ | sh
+
+    - name: get pip installer
+      get_url:
+        url: https://bootstrap.pypa.io/get-pip.py
+        dest: /tmp/get-pip.py
+
+    - name: Install pip
+      command: python /tmp/get-pip.py
+
+    - name: Install awscli
+      command: pip install awscli
+
+    - name: Create .ssh Directory
+      file:
+        path: ~/.ssh
+        state: directory
+        owner: root
+        mode: 0700
+
+    - name: Add authorized_keys
+      get_url:
+        url: https://github.com/ryota-sakamoto.keys
+        dest: ~/.ssh/authorized_keys
+        mode: 0600
+
+    - name: Enable PubkeyAuthentication
+      replace:
+        dest: /etc/ssh/sshd_config
+        regexp: "^#PubkeyAuthentication"
+        replace: "PubkeyAuthentication"
+
+    - name: Restart ssh
+      systemd:
+        name: ssh
+        state: reloaded
+
+    - name: Remove /etc/motd
+      file:
+        path: /etc/motd
+        state: absent
