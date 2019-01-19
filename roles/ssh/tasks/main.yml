@@ -1,0 +1,30 @@
+- name: Create .ssh Directory
+  file:
+    path: ~/.ssh
+    state: directory
+    owner: root
+    mode: 0700
+
+- name: Add authorized_keys
+  get_url:
+    url: https://github.com/ryota-sakamoto.keys
+    dest: ~/.ssh/authorized_keys
+    mode: 0600
+
+- name: Enable PubkeyAuthentication
+  replace:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#PubkeyAuthentication"
+    replace: "PubkeyAuthentication"
+
+- name: Disable password login
+  replace:
+    dest: /etc/ssh/sshd_config
+    regexp: "PasswordAuthentication yes"
+    replace: "PasswordAuthentication no"
+
+- name: Restart ssh
+  systemd:
+    name: ssh
+    state: reloaded
+

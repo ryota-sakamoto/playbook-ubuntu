@@ -1,0 +1,32 @@
+- name: apt install someone
+  apt:
+    name:
+      - git
+      - wget
+      - gcc
+      - tmux
+
+- name: get rustup sh
+  get_url:
+    url: https://sh.rustup.rs
+    dest: /tmp/cargo_install.sh
+
+- name: Install rustup
+  command: sh /tmp/cargo_install.sh -y
+
+- name: get pip installer
+  get_url:
+    url: https://bootstrap.pypa.io/get-pip.py
+    dest: /tmp/get-pip.py
+
+- name: Install pip
+  command: python /tmp/get-pip.py
+
+- name: Install awscli
+  command: pip install awscli
+
+- name: Remove /etc/motd
+  file:
+    path: /etc/motd
+    state: absent
+
