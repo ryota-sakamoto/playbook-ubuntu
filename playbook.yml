@@ -3,7 +3,10 @@
   user: root
   gather_facts: no
   roles:
-    - common
-    - ssh
-    - docker
+    - role: common
+      tags: common
+    - role: ssh
+      tags: ssh
+    - role: docker
+      tags: docker
 

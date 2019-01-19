@@ -5,6 +5,17 @@
       - wget
       - gcc
       - tmux
+      - software-properties-common
+
+- name: add ansible repo
+  apt_repository:
+    repo: ppa:ansible/ansible
+    state: present
+
+- name: install ansible
+  apt:
+    name:
+      - ansible
 
 - name: get rustup sh
   get_url:
