@@ -6,12 +6,11 @@
   tasks:
     - name: apt install someone
       apt:
-        name: "{{ item }}"
-      with_items:
-        - git
-        - wget
-        - gcc
-        - tmux
+        name:
+          - git
+          - wget
+          - gcc
+          - tmux
 
     - name: get rustup sh
       get_url:
